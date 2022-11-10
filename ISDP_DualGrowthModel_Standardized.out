@@ -1,0 +1,608 @@
+Mplus VERSION 8.3 (Mac)
+MUTHEN & MUTHEN
+11/09/2022  10:42 PM
+
+INPUT INSTRUCTIONS
+
+  Title:
+    Two level multilevel model in Mplus
+  Data:
+    File is Final_ISDP_72_Mplus2022-07-05.csv;
+  Variable:
+    NAMES =
+  id
+  age
+  event
+  dayt
+  occasion
+  momcort
+  childcort
+  lnmomcort
+  lnchildcort
+  itn_x
+  itn_y
+  mmed_x
+  mmed_y
+  cmed
+  Mage_x
+  age_y
+  Medu_x
+  Medu_y
+  Cage_x
+  Cage_y
+  Csex_x
+  Csex_y
+  EndsMeet_x
+  EndsMeet_y
+  UnmetNeeds_x
+  UnmetNeeds_y
+  EconAdj_x
+  EconAdj_y
+  MC
+  CC
+  MW
+  CW
+  mstress
+  sdstress
+  mc_c
+  cc_c
+  mw_c
+  cw_c
+  NCohesion
+  NQual
+  FinConcern
+  FinConComp
+  MatNeedsComp
+  pregnant
+  discrimination
+  covid
+  timec;
+
+    missing are all (999);
+
+    usevariables ARE id lnmomcort lnchildcort timec mmed_y mstress
+    pregnant Cage_y covid cmed itn_y MatNeedsComp EconAdj_y FinConComp;
+
+
+    CLUSTER = id;
+    WITHIN = timec;
+    BETWEEN = mmed_y mstress
+    pregnant Cage_y covid cmed itn_y MatNeedsComp EconAdj_y FinConComp;
+
+    define:
+
+     STANDARDIZE lnmomcort lnchildcort mmed_y mstress
+     pregnant Cage_y covid cmed itn_y MatNeedsComp EconAdj_y FinConComp;
+
+  CENTER mmed_y mstress
+  pregnant Cage_y covid cmed itn_y MatNeedsComp EconAdj_y FinConComp(grandmean);
+
+
+  ANALYSIS:
+    TYPE = TWOLEVEL RANDOM;
+    Estimator = MLR;
+  MODEL:
+    %WITHIN%
+     sm | lnmomcort ON timec ;
+     sc | lnchildcort ON timec ;
+     lnmomcort WITH lnchildcort;
+
+    %BETWEEN%
+    lnmomcort on mmed_y mstress pregnant covid itn_y MatNeedsComp EconAdj_y FinConComp;
+    sm on  mmed_y mstress pregnant covid itn_y MatNeedsComp EconAdj_y FinConComp;
+    lnchildcort on mstress Cage_y covid cmed itn_y MatNeedsComp EconAdj_y FinConComp;
+    sc on mstress Cage_y cmed itn_y MatNeedsComp EconAdj_y FinConComp;
+
+  	lnmomcort WITH lnchildcort;
+   	sm WITH sc;
+   	lnmomcort WITH sc;
+   	lnchildcort WITH sm;
+
+
+    	[mmed_y@0];
+   	[mstress@0];
+   	[pregnant@0];
+
+   	[Cage_y@0];
+     	Cage_y WITH mstress;
+    	[covid@0];
+
+    	mmed_y WITH cmed;
+    	[cmed@0];
+
+       	mmed_y WITH itn_y;
+   	[itn_y@0];
+      	mstress WITH itn_y;
+
+        	MatNeedsComp WITH itn_y;
+    	[MatNeedsComp@0];
+   	MatNeedsComp WITH mstress;
+
+      	EconAdj_y WITH itn_y;
+    	[EconAdj_y@0];
+   	EconAdj_y WITH mstress;
+    	EconAdj_y WITH MatNeedsComp;
+    	EconAdj_y WITH Cage_y;
+
+
+  	MatNeedsComp WITH FinConComp;
+    	[FinConComp@0];
+    	FinConComp WITH mstress;
+
+   	FinConComp WITH itn_y;
+   	EconAdj_y WITH FinConComp;
+
+    	covid WITH FinConComp;
+
+    output: Cinterval ;
+
+
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+*** WARNING
+  One or more individual-level variables have no variation within a
+  cluster for the following clusters.
+
+     Variable   Cluster IDs with no within-cluster variation
+
+      TIMEC       1084 1092 1100 1102 1104 2052 1094 1097 2005 2010 2012 2064
+
+   2 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+
+Two level multilevel model in Mplus
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         480
+
+Number of dependent variables                                    2
+Number of independent variables                                 11
+Number of continuous latent variables                            2
+
+Observed dependent variables
+
+  Continuous
+   LNMOMCORT   LNCHILDCOR
+
+Observed independent variables
+   TIMEC       MMED_Y      MSTRESS     PREGNANT    CAGE_Y      COVID
+   CMED        ITN_Y       MATNEEDS    ECONADJ_    FINCONCO
+
+Continuous latent variables
+   SM          SC
+
+Variables with special functions
+
+  Cluster variable      ID
+
+  Within variables
+   TIMEC
+
+  Between variables
+   MMED_Y      MSTRESS     PREGNANT    CAGE_Y      COVID       CMED
+   ITN_Y       MATNEEDS    ECONADJ_    FINCONCO
+
+  Centering (GRANDMEAN)
+   MMED_Y      MSTRESS     PREGNANT    CAGE_Y      COVID       CMED
+   ITN_Y       MATNEEDS    ECONADJ_    FINCONCO
+
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                   100
+Convergence criterion                                    0.100D-05
+Maximum number of EM iterations                                500
+Convergence criteria for the EM algorithm
+  Loglikelihood change                                   0.100D-02
+  Relative loglikelihood change                          0.100D-05
+  Derivative                                             0.100D-03
+Minimum variance                                         0.100D-03
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+Optimization algorithm                                         EMA
+
+Input data file(s)
+  Final_ISDP_72_Mplus2022-07-05.csv
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            15
+     Number of clusters                         72
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              MMED_Y        MSTRESS       PREGNANT      CAGE_Y        COVID
+              ________      ________      ________      ________      ________
+ MMED_Y         0.981
+ MSTRESS        0.981         1.000
+ PREGNANT       0.981         1.000         1.000
+ CAGE_Y         0.981         1.000         1.000         1.000
+ COVID          0.981         1.000         1.000         1.000         1.000
+ CMED           0.981         0.981         0.981         0.981         0.981
+ ITN_Y          0.933         0.952         0.952         0.952         0.952
+ MATNEEDS       0.713         0.731         0.731         0.731         0.731
+ ECONADJ_       0.713         0.731         0.731         0.731         0.731
+ FINCONCO       0.713         0.731         0.731         0.731         0.731
+ LNMOMCOR       0.912         0.929         0.929         0.929         0.929
+ LNCHILDC       0.831         0.850         0.850         0.850         0.850
+ TIMEC          0.981         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              CMED          ITN_Y         MATNEEDS      ECONADJ_      FINCONCO
+              ________      ________      ________      ________      ________
+ CMED           0.981
+ ITN_Y          0.933         0.952
+ MATNEEDS       0.713         0.700         0.731
+ ECONADJ_       0.713         0.700         0.731         0.731
+ FINCONCO       0.713         0.700         0.731         0.731         0.731
+ LNMOMCOR       0.912         0.885         0.665         0.665         0.665
+ LNCHILDC       0.831         0.810         0.604         0.604         0.604
+ TIMEC          0.981         0.952         0.731         0.731         0.731
+
+
+           Covariance Coverage
+              LNMOMCOR      LNCHILDC      TIMEC
+              ________      ________      ________
+ LNMOMCOR       0.929
+ LNCHILDC       0.810         0.850
+ TIMEC          0.929         0.850         1.000
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     MMED_Y                0.043       1.522      -0.469   80.28%      -0.469     -0.469     -0.469
+              71.000       1.070       0.317       2.131   19.72%      -0.469     -0.469
+     MSTRESS               0.030       1.487      -0.867   22.22%      -0.867     -0.439     -0.372
+              72.000       0.990       1.735       3.274    1.39%      -0.067      0.673
+     PREGNANT              0.038      -4.587      -4.359    4.17%       0.229      0.229      0.229
+              72.000       0.841      19.043       0.229   95.83%       0.229      0.229
+     CAGE_Y                0.010       0.387      -1.253    1.39%      -1.003     -0.660     -0.395
+              72.000       0.929      -1.191       2.570    1.39%       0.775      0.911
+     COVID                 0.401       1.661      -0.285   81.94%      -0.285     -0.285     -0.285
+              72.000       2.133       0.759       3.512   18.06%      -0.285     -0.285
+     CMED                 -0.027       2.244      -0.397   87.32%      -0.397     -0.397     -0.397
+              71.000       0.943       3.034       2.522   12.68%      -0.397     -0.397
+     ITN_Y                 0.049       1.065      -1.233    1.45%      -0.881     -0.560     -0.212
+              69.000       1.174       0.437       3.107    1.45%       0.099      0.665
+     MATNEEDSCOMP          0.101       0.489      -1.202    9.09%      -1.014     -0.638     -0.075
+              55.000       1.138      -0.996       2.366    3.64%       0.113      1.240
+     ECONADJ_Y             0.076       1.693      -0.808   32.73%      -0.808     -0.296     -0.296
+              55.000       1.071       2.855       3.799    1.82%       0.216      0.728
+     FINCONCOMP            0.120       0.753      -0.923   32.73%      -0.923     -0.433     -0.188
+              55.000       1.109      -0.441       2.750    3.64%       0.301      1.036
+     LNMOMCORT             0.000      -0.073      -2.380    0.22%      -0.953     -0.338      0.047
+             446.000       1.000      -0.673       3.235    0.22%       0.378      0.962
+     LNCHILDCORT           0.000      -0.079      -2.920    0.25%      -0.862     -0.289      0.021
+             408.000       1.000      -0.466       3.058    0.25%       0.311      0.920
+     TIMEC                 0.923       0.146       0.000   39.58%       0.000      1.000      1.000
+             480.000       0.709      -1.574       2.000   31.87%       1.000      2.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       71
+
+Loglikelihood
+
+          H0 Value                       -1729.717
+          H0 Scaling Correction Factor      1.2585
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                    3601.433
+          Bayesian (BIC)                  3897.772
+          Sample-Size Adjusted BIC        3672.426
+            (n* = (n + 2) / 24)
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Within Level
+
+ LNMOMCOR WITH
+    LNCHILDCOR         0.087      0.019      4.711      0.000
+
+ Residual Variances
+    LNMOMCORT          0.257      0.051      5.005      0.000
+    LNCHILDCOR         0.411      0.048      8.632      0.000
+
+Between Level
+
+ SM         ON
+    MMED_Y             0.088      0.037      2.370      0.018
+    MSTRESS           -0.097      0.034     -2.905      0.004
+    PREGNANT          -0.080      0.028     -2.882      0.004
+    COVID             -0.090      0.046     -1.950      0.051
+    ITN_Y              0.000      0.048      0.008      0.993
+    MATNEEDSCO        -0.062      0.044     -1.399      0.162
+    ECONADJ_Y         -0.007      0.027     -0.277      0.781
+    FINCONCOMP         0.136      0.049      2.775      0.006
+
+ SC         ON
+    MSTRESS           -0.081      0.066     -1.233      0.218
+    CAGE_Y            -0.037      0.055     -0.670      0.503
+    CMED              -0.052      0.063     -0.818      0.413
+    ITN_Y              0.064      0.048      1.345      0.179
+    MATNEEDSCO        -0.007      0.066     -0.102      0.919
+    ECONADJ_Y         -0.010      0.048     -0.201      0.841
+    FINCONCOMP         0.092      0.094      0.981      0.326
+
+ LNMOMCORT  ON
+    MMED_Y            -0.012      0.038     -0.306      0.760
+    MSTRESS            0.039      0.043      0.909      0.363
+    PREGNANT          -0.052      0.027     -1.978      0.048
+    COVID              0.054      0.038      1.399      0.162
+    ITN_Y              0.011      0.054      0.199      0.842
+    MATNEEDSCO         0.139      0.053      2.632      0.008
+    ECONADJ_Y         -0.013      0.050     -0.254      0.799
+    FINCONCOMP        -0.026      0.075     -0.342      0.732
+
+ LNCHILDCOR ON
+    MSTRESS            0.176      0.065      2.710      0.007
+    CAGE_Y            -0.123      0.063     -1.948      0.051
+    COVID              0.041      0.033      1.239      0.216
+    CMED               0.198      0.039      5.139      0.000
+    ITN_Y             -0.115      0.065     -1.770      0.077
+    MATNEEDSCO        -0.006      0.071     -0.080      0.936
+    ECONADJ_Y          0.000      0.050     -0.001      1.000
+    FINCONCOMP        -0.057      0.076     -0.745      0.456
+
+ LNMOMCOR WITH
+    SC                -0.017      0.024     -0.696      0.487
+
+ SM       WITH
+    SC                 0.033      0.020      1.630      0.103
+    LNCHILDCOR        -0.025      0.020     -1.282      0.200
+
+ LNMOMCOR WITH
+    LNCHILDCOR         0.020      0.023      0.886      0.375
+
+ CAGE_Y   WITH
+    MSTRESS            0.241      0.115      2.088      0.037
+    ECONADJ_Y          0.194      0.111      1.743      0.081
+
+ MMED_Y   WITH
+    CMED               0.442      0.170      2.603      0.009
+    ITN_Y              0.345      0.135      2.559      0.011
+
+ MSTRESS  WITH
+    ITN_Y             -0.142      0.091     -1.567      0.117
+    MATNEEDSCO         0.252      0.132      1.916      0.055
+    ECONADJ_Y          0.225      0.103      2.184      0.029
+    FINCONCOMP         0.453      0.111      4.071      0.000
+
+ MATNEEDS WITH
+    ITN_Y             -0.319      0.129     -2.466      0.014
+    ECONADJ_Y          0.498      0.187      2.667      0.008
+    FINCONCOMP         0.602      0.134      4.499      0.000
+
+ ECONADJ_ WITH
+    ITN_Y             -0.241      0.105     -2.307      0.021
+    FINCONCOMP         0.408      0.137      2.979      0.003
+
+ FINCONCO WITH
+    ITN_Y             -0.304      0.094     -3.227      0.001
+    COVID              0.322      0.146      2.199      0.028
+
+ Means
+    MMED_Y             0.000      0.000    999.000    999.000
+    MSTRESS            0.000      0.000    999.000    999.000
+    PREGNANT           0.000      0.000    999.000    999.000
+    CAGE_Y             0.000      0.000    999.000    999.000
+    COVID              0.000      0.000    999.000    999.000
+    CMED               0.000      0.000    999.000    999.000
+    ITN_Y              0.000      0.000    999.000    999.000
+    MATNEEDSCO         0.000      0.000    999.000    999.000
+    ECONADJ_Y          0.000      0.000    999.000    999.000
+    FINCONCOMP         0.000      0.000    999.000    999.000
+
+ Intercepts
+    LNMOMCORT          0.809      0.040     20.271      0.000
+    LNCHILDCOR         0.619      0.059     10.502      0.000
+    SM                -0.889      0.040    -22.366      0.000
+    SC                -0.663      0.052    -12.728      0.000
+
+ Variances
+    MMED_Y             1.062      0.200      5.320      0.000
+    MSTRESS            0.967      0.221      4.377      0.000
+    PREGNANT           0.842      0.446      1.887      0.059
+    CAGE_Y             0.929      0.099      9.339      0.000
+    COVID              2.293      0.555      4.129      0.000
+    CMED               0.941      0.244      3.860      0.000
+    ITN_Y              1.137      0.219      5.202      0.000
+    MATNEEDSCO         1.133      0.166      6.817      0.000
+    ECONADJ_Y          1.033      0.326      3.167      0.002
+    FINCONCOMP         1.031      0.182      5.663      0.000
+
+ Residual Variances
+    LNMOMCORT          0.030      0.020      1.469      0.142
+    LNCHILDCOR         0.076      0.036      2.122      0.034
+    SM                 0.039      0.016      2.401      0.016
+    SC                 0.079      0.023      3.398      0.001
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.562E-08
+       (ratio of smallest to largest eigenvalue)
+
+
+CONFIDENCE INTERVALS OF MODEL RESULTS
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Within Level
+
+ LNMOMCOR WITH
+    LNCHILDCOR       0.040       0.051       0.057       0.087       0.118       0.124       0.135
+
+ Residual Variances
+    LNMOMCORT        0.125       0.156       0.172       0.257       0.341       0.357       0.389
+    LNCHILDCOR       0.288       0.317       0.332       0.411       0.489       0.504       0.533
+
+Between Level
+
+ SM       ON
+    MMED_Y          -0.008       0.015       0.027       0.088       0.149       0.161       0.184
+    MSTRESS         -0.184      -0.163      -0.153      -0.097      -0.042      -0.032      -0.011
+    PREGNANT        -0.152      -0.135      -0.126      -0.080      -0.034      -0.026      -0.009
+    COVID           -0.208      -0.180      -0.165      -0.090      -0.014       0.000       0.029
+    ITN_Y           -0.123      -0.094      -0.078       0.000       0.079       0.094       0.124
+    MATNEEDSCO      -0.176      -0.149      -0.135      -0.062       0.011       0.025       0.052
+    ECONADJ_Y       -0.077      -0.060      -0.052      -0.007       0.037       0.045       0.062
+    FINCONCOMP       0.010       0.040       0.055       0.136       0.217       0.232       0.262
+
+ SC       ON
+    MSTRESS         -0.251      -0.210      -0.189      -0.081       0.027       0.048       0.088
+    CAGE_Y          -0.178      -0.144      -0.127      -0.037       0.053       0.071       0.104
+    CMED            -0.215      -0.176      -0.156      -0.052       0.052       0.072       0.111
+    ITN_Y           -0.059      -0.029      -0.014       0.064       0.142       0.157       0.186
+    MATNEEDSCO      -0.178      -0.137      -0.116      -0.007       0.102       0.123       0.164
+    ECONADJ_Y       -0.132      -0.103      -0.088      -0.010       0.069       0.084       0.113
+    FINCONCOMP      -0.150      -0.092      -0.062       0.092       0.247       0.276       0.334
+
+ LNMOMCOR ON
+    MMED_Y          -0.110      -0.087      -0.075      -0.012       0.051       0.063       0.087
+    MSTRESS         -0.072      -0.046      -0.032       0.039       0.111       0.124       0.151
+    PREGNANT        -0.121      -0.104      -0.096      -0.052      -0.009       0.000       0.016
+    COVID           -0.045      -0.022      -0.009       0.054       0.117       0.129       0.153
+    ITN_Y           -0.129      -0.096      -0.079       0.011       0.100       0.118       0.151
+    MATNEEDSCO       0.003       0.036       0.052       0.139       0.226       0.243       0.276
+    ECONADJ_Y       -0.140      -0.110      -0.094      -0.013       0.069       0.084       0.115
+    FINCONCOMP      -0.219      -0.173      -0.149      -0.026       0.098       0.121       0.168
+
+ LNCHILDC ON
+    MSTRESS          0.009       0.049       0.069       0.176       0.283       0.304       0.344
+    CAGE_Y          -0.287      -0.248      -0.228      -0.123      -0.019       0.001       0.040
+    COVID           -0.044      -0.024      -0.013       0.041       0.095       0.105       0.125
+    CMED             0.099       0.122       0.135       0.198       0.261       0.273       0.297
+    ITN_Y           -0.283      -0.243      -0.223      -0.115      -0.008       0.012       0.053
+    MATNEEDSCO      -0.189      -0.145      -0.123      -0.006       0.111       0.134       0.178
+    ECONADJ_Y       -0.129      -0.098      -0.082       0.000       0.082       0.098       0.129
+    FINCONCOMP      -0.252      -0.206      -0.182      -0.057       0.068       0.092       0.139
+
+ LNMOMCOR WITH
+    SC              -0.078      -0.063      -0.056      -0.017       0.023       0.030       0.045
+
+ SM       WITH
+    SC              -0.019      -0.007       0.000       0.033       0.067       0.073       0.086
+    LNCHILDCOR      -0.077      -0.064      -0.058      -0.025       0.007       0.013       0.026
+
+ LNMOMCOR WITH
+    LNCHILDCOR      -0.038      -0.024      -0.017       0.020       0.057       0.065       0.079
+
+ CAGE_Y   WITH
+    MSTRESS         -0.056       0.015       0.051       0.241       0.431       0.467       0.539
+    ECONADJ_Y       -0.093      -0.024       0.011       0.194       0.378       0.413       0.481
+
+ MMED_Y   WITH
+    CMED             0.005       0.109       0.163       0.442       0.721       0.775       0.879
+    ITN_Y           -0.002       0.081       0.123       0.345       0.567       0.610       0.693
+
+ MSTRESS  WITH
+    ITN_Y           -0.375      -0.319      -0.291      -0.142       0.007       0.036       0.091
+    MATNEEDSCO      -0.087      -0.006       0.036       0.252       0.468       0.510       0.591
+    ECONADJ_Y       -0.040       0.023       0.055       0.225       0.394       0.426       0.490
+    FINCONCOMP       0.167       0.235       0.270       0.453       0.637       0.672       0.740
+
+ MATNEEDS WITH
+    ITN_Y           -0.652      -0.572      -0.531      -0.319      -0.106      -0.065       0.014
+    ECONADJ_Y        0.017       0.132       0.191       0.498       0.805       0.864       0.979
+    FINCONCOMP       0.257       0.340       0.382       0.602       0.821       0.864       0.946
+
+ ECONADJ_ WITH
+    ITN_Y           -0.511      -0.446      -0.413      -0.241      -0.069      -0.036       0.028
+    FINCONCOMP       0.055       0.140       0.183       0.408       0.634       0.677       0.761
+
+ FINCONCO WITH
+    ITN_Y           -0.547      -0.489      -0.459      -0.304      -0.149      -0.119      -0.061
+    COVID           -0.055       0.035       0.081       0.322       0.563       0.609       0.699
+
+ Means
+    MMED_Y           0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    MSTRESS          0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    PREGNANT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    CAGE_Y           0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    COVID            0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    CMED             0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    ITN_Y            0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    MATNEEDSCO       0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    ECONADJ_Y        0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    FINCONCOMP       0.000       0.000       0.000       0.000       0.000       0.000       0.000
+
+ Intercepts
+    LNMOMCORT        0.707       0.731       0.744       0.809       0.875       0.888       0.912
+    LNCHILDCOR       0.467       0.503       0.522       0.619       0.715       0.734       0.770
+    SM              -0.991      -0.967      -0.954      -0.889      -0.824      -0.811      -0.787
+    SC              -0.797      -0.765      -0.748      -0.663      -0.577      -0.561      -0.529
+
+ Variances
+    MMED_Y           0.548       0.671       0.734       1.062       1.391       1.454       1.577
+    MSTRESS          0.398       0.534       0.604       0.967       1.331       1.400       1.536
+    PREGNANT        -0.307      -0.032       0.108       0.842       1.576       1.717       1.991
+    CAGE_Y           0.673       0.734       0.765       0.929       1.093       1.124       1.185
+    COVID            0.863       1.205       1.380       2.293       3.207       3.382       3.724
+    CMED             0.313       0.463       0.540       0.941       1.341       1.418       1.568
+    ITN_Y            0.574       0.709       0.777       1.137       1.497       1.565       1.700
+    MATNEEDSCO       0.705       0.808       0.860       1.133       1.407       1.459       1.562
+    ECONADJ_Y        0.193       0.394       0.496       1.033       1.569       1.672       1.873
+    FINCONCOMP       0.562       0.674       0.731       1.031       1.330       1.387       1.499
+
+ Residual Variances
+    LNMOMCORT       -0.023      -0.010      -0.004       0.030       0.064       0.070       0.083
+    LNCHILDCOR      -0.016       0.006       0.017       0.076       0.134       0.145       0.167
+    SM              -0.003       0.007       0.012       0.039       0.066       0.071       0.081
+    SC               0.019       0.034       0.041       0.079       0.118       0.125       0.139
+
+
+     Beginning Time:  22:42:49
+        Ending Time:  22:42:52
+       Elapsed Time:  00:00:03
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2019 Muthen & Muthen

@@ -1,0 +1,131 @@
+Title:
+  Two level multilevel model in Mplus
+Data:
+  File is Final_ISDP_72_Mplus2022-07-05.csv;
+Variable:
+  NAMES = 
+id
+age
+event
+dayt
+occasion
+momcort
+childcort
+lnmomcort
+lnchildcort
+itn_x
+itn_y
+mmed_x
+mmed_y
+cmed
+Mage_x
+age_y
+Medu_x
+Medu_y
+Cage_x
+Cage_y
+Csex_x
+Csex_y
+EndsMeet_x
+EndsMeet_y
+UnmetNeeds_x
+UnmetNeeds_y
+EconAdj_x
+EconAdj_y
+MC
+CC
+MW
+CW
+mstress
+sdstress
+mc_c
+cc_c
+mw_c
+cw_c
+NCohesion
+NQual
+FinConcern
+FinConComp
+MatNeedsComp
+pregnant
+discrimination
+covid
+timec;
+  
+  missing are all (999);  
+
+  usevariables ARE id lnmomcort lnchildcort timec mmed_y mstress 
+  pregnant Cage_y covid cmed itn_y MatNeedsComp EconAdj_y FinConComp;
+
+  
+  CLUSTER = id;
+  WITHIN = timec;
+  BETWEEN = mmed_y mstress 
+  pregnant Cage_y covid cmed itn_y MatNeedsComp EconAdj_y FinConComp;
+
+  define:  
+ 
+   STANDARDIZE lnmomcort lnchildcort mmed_y mstress
+   pregnant Cage_y covid cmed itn_y MatNeedsComp EconAdj_y FinConComp;
+   
+CENTER mmed_y mstress 
+pregnant Cage_y covid cmed itn_y MatNeedsComp EconAdj_y FinConComp(grandmean);
+  
+ 
+ANALYSIS:
+  TYPE = TWOLEVEL RANDOM;
+  Estimator = MLR;
+MODEL:
+  %WITHIN%
+   sm | lnmomcort ON timec ;
+   sc | lnchildcort ON timec ;
+   lnmomcort WITH lnchildcort;
+
+  %BETWEEN%
+  lnmomcort on mmed_y mstress pregnant covid itn_y MatNeedsComp EconAdj_y FinConComp;
+  sm on  mmed_y mstress pregnant covid itn_y MatNeedsComp EconAdj_y FinConComp;
+  lnchildcort on mstress Cage_y covid cmed itn_y MatNeedsComp EconAdj_y FinConComp;
+  sc on mstress Cage_y cmed itn_y MatNeedsComp EconAdj_y FinConComp;
+  
+	lnmomcort WITH lnchildcort;
+ 	sm WITH sc;
+ 	lnmomcort WITH sc;
+ 	lnchildcort WITH sm;
+
+  
+  	[mmed_y@0];
+ 	[mstress@0];
+ 	[pregnant@0];
+  
+ 	[Cage_y@0];
+   	Cage_y WITH mstress;
+  	[covid@0];
+  
+  	mmed_y WITH cmed;
+  	[cmed@0];
+  
+     	mmed_y WITH itn_y;
+ 	[itn_y@0];
+    	mstress WITH itn_y;
+
+      	MatNeedsComp WITH itn_y;
+  	[MatNeedsComp@0];
+ 	MatNeedsComp WITH mstress;
+
+    	EconAdj_y WITH itn_y;
+  	[EconAdj_y@0];
+ 	EconAdj_y WITH mstress;
+  	EconAdj_y WITH MatNeedsComp;
+  	EconAdj_y WITH Cage_y;
+
+  
+	MatNeedsComp WITH FinConComp;
+  	[FinConComp@0];
+  	FinConComp WITH mstress;
+  
+ 	FinConComp WITH itn_y;
+ 	EconAdj_y WITH FinConComp;
+  
+  	covid WITH FinConComp;
+ 
+  output: Cinterval ;
